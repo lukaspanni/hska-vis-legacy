@@ -1,15 +1,30 @@
 version: '3.2'
 services:
-  legacywebshop:
+#  legacywebshop:
+#    build:
+#      context: ./
+#      dockerfile: ./docker/Dockerfile
+#    ports:
+#      - "8888:8080"
+#    networks:
+#      local_dev_net:
+#          aliases:
+#              - legacywebshop
+
+  category-service:
     build:
-      context: ./
-      dockerfile: ./docker/Dockerfile
+      context: microservices/category-service
+      dockerfile: Dockerfile
     ports:
-      - "8888:8080"
+      - "8080:8080"
+    environment:
+      MYSQL_HOST: web-shop-db-image
     networks:
       local_dev_net:
-          aliases:
-              - legacywebshop
+        aliases:
+          - category-service
+    depends_on:
+      - web-shop-db-image
 
   web-shop-db-image:
     build:
@@ -19,9 +34,9 @@ services:
       - "./.data/db:/var/lib/mysql"
     environment:
       MYSQL_ROOT_PASSWORD: c8de110f37300a53a971749
-      MYSQL_DATABASE: webshop
-      MYSQL_USER: webshopuser
-      MYSQL_PASSWORD: 240b2c6d58ff2ce2f508b49f
+#      MYSQL_DATABASE: webshop
+#      MYSQL_USER: webshopuser
+#      MYSQL_PASSWORD: 240b2c6d58ff2ce2f508b49f
     ports:
       - "3306:3306"
     networks:
