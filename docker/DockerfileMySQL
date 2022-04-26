@@ -1,6 +1,7 @@
 FROM mysql:5.7.9
 
-COPY ./sql/category-db.sql /docker-entrypoint-initdb.d/
+COPY ./sql/category-db.sql /docker-entrypoint-initdb.d/category-db.sql
+COPY ./sql/product-db.sql /docker-entrypoint-initdb.d/product-db.sql
 
 #COPY ./sql/create-tables.sql /docker-entrypoint-initdb.d/create-tables.sql
 #COPY ./sql/initial.sql /docker-entrypoint-initdb.d/initial.sql
