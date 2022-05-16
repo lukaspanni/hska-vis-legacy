@@ -14,7 +14,6 @@ items:
           targetPort: 8080
       selector:
         io.kompose.service: category-service
-      type: LoadBalancer
     status:
       loadBalancer: {}
   - apiVersion: v1
@@ -26,12 +25,11 @@ items:
       name: product-service
     spec:
       ports:
-        - name: "8081"
-          port: 8081
+        - name: "8080"
+          port: 8080
           targetPort: 8080
       selector:
         io.kompose.service: product-service
-      type: LoadBalancer
     status:
       loadBalancer: {}
 
@@ -49,6 +47,24 @@ items:
           targetPort: 3306
       selector:
         io.kompose.service: web-shop-db-image
+    status:
+      loadBalancer: {}
+
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: nginx
+      name: nginx
+    spec:
+      ports:
+        - port: 80
+          protocol: TCP
+          targetPort: 80
+      selector:
+        run: nginx
+      type: LoadBalancer
     status:
       loadBalancer: {}
 
@@ -176,6 +192,34 @@ items:
             - name: web-shop-db-image-claim0
               persistentVolumeClaim:
                 claimName: web-shop-db-image-claim0
+    status: {}
+
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: nginx
+      name: nginx
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          run: nginx
+      strategy: {}
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            run: nginx
+        spec:
+          containers:
+            - image: nginx-proxy
+              imagePullPolicy: Never
+              name: nginx
+              ports:
+                - containerPort: 80
+              resources: {}
     status: {}
 
   - apiVersion: v1
