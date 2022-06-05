@@ -1,6 +1,23 @@
 apiVersion: v1
 items:
   - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: config
+    data:
+      mysql_host: "web-shop-db-image"
+      product_endpoint: "product-service"
+      category_endpoint: "category-service"
+
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: config-secrets
+    type: Opague
+    stringData:
+      mysql_root_password: "c8de110f37300a53a971749"
+
+  - apiVersion: v1
     kind: Service
     metadata:
       creationTimestamp: null
@@ -91,9 +108,15 @@ items:
           containers:
             - env:
                 - name: MYSQL_HOST
-                  value: web-shop-db-image
+                  valueFrom:
+                    configMapKeyRef:
+                      name: config
+                      key: mysql_host
                 - name: PRODUCT_ENDPOINT
-                  value: product-service
+                  valueFrom:
+                    configMapKeyRef:
+                      name: config
+                      key: product_endpoint
               image: category-service
               imagePullPolicy: Never
               name: category-service
@@ -140,10 +163,16 @@ items:
         spec:
           containers:
             - env:
-                - name: CATEGORY_ENDPOINT
-                  value: category-service
                 - name: MYSQL_HOST
-                  value: web-shop-db-image
+                  valueFrom:
+                    configMapKeyRef:
+                      name: config
+                      key: mysql_host
+                - name: CATEGORY_ENDPOINT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: config
+                      key: category_endpoint
               image: product-service
               imagePullPolicy: Never
               name: product-service
@@ -177,7 +206,11 @@ items:
           containers:
             - env:
                 - name: MYSQL_ROOT_PASSWORD
-                  value: c8de110f37300a53a971749
+                  valueFrom:
+                    secretKeyRef:
+                      name: config-secrets
+                      key: mysql_root_password
+                      optional: false
               image: web-shop-db-image
               imagePullPolicy: Never
               name: web-shop-db-image
@@ -206,7 +239,6 @@ items:
   #     selector:
   #       matchLabels:
   #         run: nginx
-  #     strategy: {}
   #     template:
   #       metadata:
   #         creationTimestamp: null
@@ -236,5 +268,6 @@ items:
         requests:
           storage: 100Mi
     status: {}
+
 kind: List
 metadata: {}
