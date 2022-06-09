@@ -23,21 +23,37 @@ spec:
   gateways:
     - microservices-gateway
   http:
-    - name: categories
+    - name: frontend
       match:
         - uri:
-            prefix: /categories
+            prefix: /
       route:
         - destination:
-            host: category-service
+            host: frontend
             port:
               number: 8080
-    - name: products
-      match:
-        - uri:
-            prefix: /products
-      route:
-        - destination:
-            host: product-service
-            port:
-              number: 8080
+
+
+
+
+
+
+#  http:
+#    - name: categories
+#      match:
+#        - uri:
+#            prefix: /categories
+#      route:
+#        - destination:
+#            host: category-service
+#            port:
+#              number: 8080
+#    - name: products
+#      match:
+#        - uri:
+#            prefix: /products
+#      route:
+#        - destination:
+#            host: product-service
+#            port:
+#              number: 8080

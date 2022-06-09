@@ -9,6 +9,7 @@ items:
       product_endpoint: "product-service"
       category_endpoint: "category-service"
 
+
   - apiVersion: v1
     kind: Secret
     metadata:
@@ -67,6 +68,24 @@ items:
     status:
       loadBalancer: {}
 
+
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: frontend
+      name: frontend
+    spec:
+      ports:
+        - name: "8080"
+          port: 8080
+          targetPort: 8080
+      selector:
+        io.kompose.service: frontend
+    status:
+      loadBalancer: {}
+
   # - apiVersion: v1
   #   kind: Service
   #   metadata:
@@ -84,6 +103,57 @@ items:
   #     type: LoadBalancer
   #   status:
   #     loadBalancer: {}
+
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: frontend
+      name: frontend
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          io.kompose.service: frontend
+      strategy: {}
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            io.kompose.network/local-dev-net: "true"
+            io.kompose.service: frontend
+        spec:
+          containers:
+            - env:
+                - name: MYSQL_HOST
+                  valueFrom:
+                    configMapKeyRef:
+                      name: config
+                      key: mysql_host
+                - name: PRODUCT_ENDPOINT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: config
+                      key: product_endpoint
+                - name: CATEGORY_ENDPOINT
+                    valueFrom:
+                      configMapKeyRef:
+                        name: config
+                        key: category_endpoint
+              image: frontend
+              imagePullPolicy: Never
+              name: frontend
+              ports:
+                - containerPort: 8080
+              resources: {}
+          restartPolicy: Always
+    status: {}
+
+
+
+
+
 
   - apiVersion: apps/v1
     kind: Deployment
