@@ -35,7 +35,7 @@ public class ProductManagerImpl implements ProductManager {
 
     public List<Product> getProductsForSearchValues(String searchDescription,
                                                     Double searchMinPrice, Double searchMaxPrice) {
-        StringBuilder builder = new StringBuilder().append(productEndpoint).append("&search=").append(searchDescription);
+        StringBuilder builder = new StringBuilder().append(productEndpoint).append("?search=").append(searchDescription);
         if (searchMinPrice != null)
             builder.append("&minPrice=").append(searchMinPrice);
         if (searchMaxPrice != null)
