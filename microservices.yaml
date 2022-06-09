@@ -137,10 +137,10 @@ items:
                       name: config
                       key: product_endpoint
                 - name: CATEGORY_ENDPOINT
-                    valueFrom:
-                      configMapKeyRef:
-                        name: config
-                        key: category_endpoint
+                  valueFrom:
+                    configMapKeyRef:
+                      name: config
+                      key: category_endpoint
               image: frontend
               imagePullPolicy: Never
               name: frontend
