@@ -53,7 +53,6 @@ public class RESTHelper {
             try (InputStream is = connection.getInputStream()) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(is));
                 String response = br.lines().collect(Collectors.joining());
-                System.out.println(response);
                 return response;
             }
         } catch (Exception e) {

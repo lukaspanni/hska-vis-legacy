@@ -34,6 +34,8 @@ public class Product implements java.io.Serializable {
 	@Column(name = "details")
 	private String details;
 
+	public int categoryId;
+
 	public Product() {
 	}
 

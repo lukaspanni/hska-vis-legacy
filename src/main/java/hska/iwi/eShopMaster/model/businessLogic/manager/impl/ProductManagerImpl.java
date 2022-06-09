@@ -23,8 +23,9 @@ public class ProductManagerImpl implements ProductManager {
 
     public List<Product> getProducts() {
         try {
-            String response = get(productEndpoint + "?full=true");
+            String response = get(productEndpoint);
             Product[] products = gson.fromJson(response, Product[].class);
+            getCategories(products);
             return Arrays.asList(products);
         } catch (Exception e) {
             return new ArrayList<>();
@@ -34,7 +35,7 @@ public class ProductManagerImpl implements ProductManager {
 
     public List<Product> getProductsForSearchValues(String searchDescription,
                                                     Double searchMinPrice, Double searchMaxPrice) {
-        StringBuilder builder = new StringBuilder().append(productEndpoint).append("?full=true&&search=").append(searchDescription);
+        StringBuilder builder = new StringBuilder().append(productEndpoint).append("&search=").append(searchDescription);
         if (searchMinPrice != null)
             builder.append("&minPrice=").append(searchMinPrice);
         if (searchMaxPrice != null)
@@ -42,6 +43,7 @@ public class ProductManagerImpl implements ProductManager {
         try {
             String response = get(builder.toString());
             Product[] products = gson.fromJson(response, Product[].class);
+            getCategories(products);
             return Arrays.asList(products);
         } catch (Exception e) {
             return new ArrayList<>();
@@ -50,8 +52,10 @@ public class ProductManagerImpl implements ProductManager {
 
     public Product getProductById(int id) {
         try {
-            String response = get(productEndpoint + id+"?full=true");
-            return gson.fromJson(response, Product.class);
+            String response = get(productEndpoint + id);
+            Product product = gson.fromJson(response, Product.class);
+            product.setCategory(new CategoryManagerImpl().getCategory(product.categoryId));
+            return product;
         } catch (Exception e) {
             return null;
         }
@@ -74,8 +78,10 @@ public class ProductManagerImpl implements ProductManager {
             product = new Product(name, price, category, details);
         }
 
+        product.categoryId = categoryId;
         try {
-            post(productEndpoint, gson.toJson(product));
+            String response = post(productEndpoint, gson.toJson(product));
+            return gson.fromJson(response, Product.class).getId();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -95,6 +101,13 @@ public class ProductManagerImpl implements ProductManager {
     public boolean deleteProductsByCategoryId(int categoryId) {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    private void getCategories(Product[] products) {
+        CategoryManager categoryManager = new CategoryManagerImpl();
+        for(Product product: products){
+            product.setCategory(categoryManager.getCategory(product.categoryId));
+        }
     }
 
 }
